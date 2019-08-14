@@ -37,9 +37,9 @@ describe Oystercard do
       expect(subject).to be_in_journey
     end
     it 'can raise an error at lower limit' do
-      expect { subject.touch_in(station) }.to raise_error("You need more money!")
+      expect { subject.touch_in(station) }.to raise_error("You need a a minimum of #{MINIMUM_BALANCE}")
     end
-    it 'can record starting station' do
+    xit 'can record starting station' do
       subject.top_up(10)
       subject.touch_in(station)
       expect(subject.starting_station).to eq(station)
@@ -52,7 +52,7 @@ describe Oystercard do
       subject.touch_out(exit_station)
       expect(subject).to_not be_in_journey
     end
-    it 'erases the starting station' do
+    xit 'erases the starting station' do
       subject.top_up(10)
       subject.touch_in(station)
       subject.touch_out(exit_station)
@@ -71,7 +71,10 @@ describe Oystercard do
       expect(subject.exit_station).to eq(exit_station)
     end
   end
-  describe 'it can record journeys' do
+  describe '#journey_history' do
+    it 'empty journey_history by default' do
+      expect(subject.journey_history).to be_empty
+    end
     it 'it has a start and end journey' do
       subject.top_up(10)
       subject.touch_in(station)

@@ -4,7 +4,7 @@ MINIMUM_FEE = 5
 
 class Oystercard
 
-  attr_reader :balance, :starting_station, :exit_station, :journey_history
+  attr_reader :balance, :journey_history, :journey
 
   def initialize
     # @starting_station = nil
@@ -17,22 +17,24 @@ class Oystercard
     @balance += num
   end
   def in_journey?
-    @starting_station.nil? ? false : true
+    @journey.nil? ? false : true
     # !@starting_station.nil?
-
     # @in_journey
   end
   def touch_in(station)
-    fail "You need more money!" if @balance < MINIMUM_BALANCE
-    @starting_station = station
+    fail "You need a a minimum of #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
+    @journey = Journey.new
+    @journey.start_journey(station)
     # @in_journey = true
   end
   def touch_out(station)
-    @exit_station = station
-    @journey_history.push({start: @starting_station, end: @exit_station})
-    @starting_station = nil
-    @exit_station = nil
+    @journey.end_journey(station)
+    store_journey_history
     deduct(MINIMUM_FEE)
+    @journey = nil
+  end
+  def store_journey_history
+    @journey_history.push(@journey.complete_journey)
   end
   private
   def maximum?(num)
